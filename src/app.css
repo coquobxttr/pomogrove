@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+@layer base {
+    html, body {
+        @apply h-full;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-bold;
+        @apply my-5;
+    }
+
+    h1 {
+        @apply text-5xl
+    }
+
+    #menuBar li {
+        @apply bg-red-400;
+        @apply mx-2;
+        @apply p-1;
+        @apply px-5;
+        @apply rounded-full;
+        @apply hover:bg-red-800;
+        @apply cursor-pointer;
+    }
+}
