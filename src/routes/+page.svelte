@@ -7,16 +7,16 @@
     import PomodoroEnd from "$lib/components/PomodoroEnd.svelte";
     import type { GridObject } from "$lib/types";
 
-    let timeSelectOpen = false;
-    let pomodoroTime = 0;
-    let xp = 0
-    let duration = 0;
-    let timerOpen = false;
-    let pomodoroEndScreen = false;
+    let timeSelectOpen = $state(false);
+    let pomodoroTime = $state(0);
+    let xp = $state(0)
+    let duration = $state(0);
+    let timerOpen = $state(false);
+    let pomodoroEndScreen = $state(false);
 
-    let userXP = 0;
+    let userXP = $state(0);
 
-    let gridObjects: GridObject[] = [
+    let gridObjects: GridObject[] = $state([
         {
             type: "grass",
             unlockDate: new Date(),
@@ -24,7 +24,8 @@
             x: 0,
             z: 0
         }
-    ]
+    ])
+    
     function getRandomAdjacentPosition() {
         const randomBox = gridObjects[Math.floor(Math.random() * gridObjects.length)];
         
