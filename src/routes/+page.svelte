@@ -5,11 +5,16 @@
     import Timer from "$lib/components/Timer.svelte";
     import TimeSelect from "$lib/components/TimeSelect.svelte";
     import PomodoroEnd from "$lib/components/PomodoroEnd.svelte";
+    import Settings from "$lib/components/Settings.svelte";
     import type { GridObject } from "$lib/types";
     import { onMount } from "svelte";
     import { load } from '@tauri-apps/plugin-store';
+    import Alert from "$lib/components/DeleteDataAlert.svelte";
+    import type { Store } from "@tauri-apps/plugin-store";
 
     let timeSelectOpen = $state(false);
+    let settingsOpen = $state(false);
+    let deleteDataAlert = $state(false)
     let pomodoroTime = $state(0);
     let xp = $state(0)
     let duration = $state(0);
@@ -18,11 +23,13 @@
     let userXP = $state(0);
     let lastBlockType = $state("Grass")
 
+    let store: Store | null = $state(null)
+
     let blocks: GridObject[] = $state([
         {
             blockType: "Grass",
             unlockDate: new Date(),
-            pomodoro_time: 20,
+            pomodoroTime: 20,
             x: 0,
             z: 0
         }
@@ -119,7 +126,7 @@
             
             // Calculate probabilities (more adjacent blocks = higher chance)
             const totalAdjacent = adjacentTypes.length;
-            const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 2 : 1;
+            const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.5 : 1;
             const waterWeight = totalAdjacent > 0 ? (waterCount + 1) : 1;
             const totalWeight = grassWeight + waterWeight;
             
@@ -139,7 +146,7 @@
         blocks.push({
             blockType: type,
             unlockDate: new Date(),
-            pomodoro_time: duration,
+            pomodoroTime: duration,
             x: position.x,
             z: position.z
         });
@@ -161,31 +168,47 @@
         saveUserData()
     }
 
-    async function saveUserData() {
-        const store = await load('userData.json')
+    async function resetData() {
+        deleteDataAlert = false
 
-        await store.set('xp', userXP)
-        await store.set('blocks', blocks)
+        if (!store) return
+
+        xp = 0
+        blocks = [
+            {
+                blockType: "Grass",
+                unlockDate: new Date(),
+                pomodoroTime: 20,
+                x: 0,
+                z: 0
+            }
+        ]
+
+        await store.clear()
         await store.save()
-        await store.close()
+    }
+
+    async function saveUserData() {
+        if (store) {
+            await store.set('xp', userXP)
+            await store.set('blocks', blocks)
+            await store.save()
+        } 
     }
 
     onMount(async() => {
         //load data from store
-        const store = await load('userData.json')
-        if (store) console.log("AHHHHHH")
+        store = await load('userData.json')
         const storeXP = await store.get<number>('xp')
         const storeBlocks = await store.get<GridObject[]>('blocks')
         
         if (storeXP !== null && storeXP !== undefined) userXP = storeXP
         if (storeBlocks) blocks = storeBlocks
 
-        console.log(`Loaded - userXP: ${userXP} | storeXP: ${storeXP}`)
-        console.log('Loaded blocks:', blocks)
+        console.log(storeXP)
+        console.log(blocks)
 
         blocks = blocks
-
-        await store.close()
     })
 </script>
 
@@ -198,7 +221,7 @@
             <ul id="menuBar" class="bg-rose-100 rounded-full p-2 flex flex-row pointer-events-auto shadow-lg">
                 <li class="pointer-events-none">{userXP} XP</li>
                 <li onclick={() => timeSelectOpen = !timeSelectOpen}>Start</li>
-                <li>Settings</li>
+                <li onclick={() => settingsOpen = true}>Settings</li>
             </ul>
         </div>
     {/if}
@@ -232,6 +255,18 @@
                 xp={xp}
                 blockType={lastBlockType}
             />
+        </div>
+    {/if}
+
+    {#if settingsOpen}
+        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+            <Settings bind:settingsOpen={settingsOpen} bind:deleteDataAlert={deleteDataAlert}/>
+        </div>
+    {/if}
+
+    {#if deleteDataAlert}
+        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+            <Alert bind:alertOpen={deleteDataAlert} resetData={resetData}/>
         </div>
     {/if}
 

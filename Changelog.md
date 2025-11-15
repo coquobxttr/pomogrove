@@ -1,6 +1,19 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.0] - 2025-11-15
+
+### Added
+
+- Settings Menu
+    - Reset data button
+    - Button to open README
+- Bush Block
+- Tree Block
+
+### Changed
+
+- Lowered hances of a grass block appearing if the user only does a short pomodoro session
 
 ## [0.4.0] - 2025-11-15
 

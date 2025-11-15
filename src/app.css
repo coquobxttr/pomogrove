@@ -29,4 +29,28 @@
         @apply cursor-pointer;
         @apply text-white
     }
+
+    #settings li {
+        @apply bg-rose-50;
+        @apply hover:bg-rose-100;
+        @apply transition-colors;
+        @apply cursor-pointer;
+        @apply p-1;
+        @apply px-5;
+        @apply m-5;
+        @apply rounded-full;
+    }
+
+    #alert button {
+        @apply bg-rose-200;
+        @apply hover:bg-rose-300;
+        @apply cursor-pointer;
+        @apply mx-4;
+        @apply my-2;
+        @apply p-2;
+        @apply px-5;
+        @apply w-fit;
+        @apply rounded-full;
+        @apply transition-colors;
+    }
 }

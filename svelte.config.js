@@ -4,10 +4,11 @@
 // See: https://v2.tauri.app/start/frontend/sveltekit/ for more info
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import { mdsvex } from "mdsvex";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  preprocess: vitePreprocess(),
+  preprocess: [vitePreprocess(), mdsvex()],
   kit: {
     adapter: adapter({
       fallback: "index.html",
@@ -26,7 +27,8 @@ const config = {
 			]
 			return !ignore.includes(warning.code)
 		},
-	}
+	},
+	extensions: ['.svelte', '.svx']
 };
 
 export default config;

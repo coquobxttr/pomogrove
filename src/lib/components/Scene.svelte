@@ -5,17 +5,19 @@
     import { Object3D, PerspectiveCamera } from 'three';
     import {Grid} from '@threlte/extras';
     import { injectLookAtPlugin } from './lookAtPlugin.svelte';
-    import { FogExp2 } from 'three';
+
+    import Bush from '$lib/components/models/Bush.svelte';
+    import Tree from '$lib/components/models/Tree.svelte';
 
     interactivity()
     
-    let { blocks } = $props()
+    let { blocks = [] } = $props()
     const { pointer } = useInteractivity()
     const camFocus = $state<[number, number, number]>([0, 0, 0])
 
     const gridGap = 0.15
     const boxSize = 1
-    const { hovering, onPointerEnter, onPointerLeave } = useCursor()
+    const { onPointerEnter, onPointerLeave } = useCursor()
 
     const cameraTargetPos = new Spring(
         {
@@ -40,6 +42,10 @@
             precision: 0.00001
         }
     )
+
+    $effect(() => {
+        console.log('Scene received blocks:', blocks)
+    })
 
     useTask(() => {
         camFocus[0] = 0
@@ -100,8 +106,39 @@
                     <T.BoxGeometry args={[1, 1, 1]} />
                     <T.MeshStandardMaterial color="#fa8ce4" />
                 </T.Mesh>
+            {:else if object.blockType == "Bush"}
+                <T.Group position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}>
+                    <Bush position={[0.1,0.5,0]} scale={0.8}/>
+                    <T.Mesh
+                        onpointerenter={() => {
+                            onPointerEnter()
+                        }}
+                        onpointerleave={() => {
+                            onPointerLeave()
+                        }}
+                        castShadow
+                    >
+                        <T.BoxGeometry args={[1, 1, 1]} />
+                        <T.MeshStandardMaterial color="#d16485" />
+                    </T.Mesh>
+                </T.Group>
+            {:else if object.blockType == "Tree"}
+                <T.Group position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}>
+                    <Tree position={[-0.0025,-0.2,0]} scale={0.8} castShadow/>
+                    <T.Mesh
+                        onpointerenter={() => {
+                            onPointerEnter()
+                        }}
+                        onpointerleave={() => {
+                            onPointerLeave()
+                        }}
+                        castShadow
+                    >
+                        <T.BoxGeometry args={[1, 1, 1]} />
+                        <T.MeshStandardMaterial color="#d16485" />
+                    </T.Mesh>
+                </T.Group>
             {/if}
-            
         {/each}
     </T.Group>
     

@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use tauri_plugin_store::StoreExt;
 use serde_json::json;
-use tauri::{AppHandle};
+use tauri::AppHandle;
+use tauri_plugin_store::StoreExt;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct GridObjects {
@@ -34,6 +34,7 @@ fn invoke_user_data(app: AppHandle, data: UserData) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             //creating/loading an existing store

@@ -3,7 +3,7 @@ import type * as THREE from 'three'
 export interface GridObject {
     blockType: string;
     unlockDate: Date;
-    pomodoro_time: number;
+    pomodoroTime: number;
     x: number;
     z: number;
 }
