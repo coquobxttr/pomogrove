@@ -8,6 +8,7 @@
 
     import Bush from '$lib/components/models/Bush.svelte';
     import Tree from '$lib/components/models/Tree.svelte';
+    import Flowers from '$lib/components/models/Flowers.svelte';
 
     interactivity()
     
@@ -138,6 +139,22 @@
                         <T.MeshStandardMaterial color="#d16485" />
                     </T.Mesh>
                 </T.Group>
+            {:else if object.blockType == "Flowers"}
+                <T.Group position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}>
+                    <Flowers position={[0,0,0.1]} scale={0.5} castShadow/>
+                    <T.Mesh
+                        onpointerenter={() => {
+                            onPointerEnter()
+                        }}
+                        onpointerleave={() => {
+                            onPointerLeave()
+                        }}
+                        castShadow
+                    >
+                        <T.BoxGeometry args={[1, 1, 1]} />
+                        <T.MeshStandardMaterial color="#d16485" />
+                    </T.Mesh>
+                </T.Group>
             {/if}
         {/each}
     </T.Group>
@@ -151,5 +168,8 @@
         makeDefault
     />
 
+    <!--
     <Grid infiniteGrid={true} />
+    -->
+    
 </T.Scene>

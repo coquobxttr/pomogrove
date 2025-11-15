@@ -107,11 +107,11 @@
         if (xp < 15) {
             type = "Grass";
         } else if (xp >= 15 && xp < 27) {
-            type = "flower";
+            type = "Flowers";
         } else if (xp >= 27 && xp < 36) {
-            type = "bush";
+            type = "Bush";
         } else if (xp >= 36) {
-            type = "tree";
+            type = "Tree";
         }
         */
 
@@ -134,7 +134,7 @@
             
             type = Math.random() < grassProbability ? "Grass" : "Water";
         } else if (xp >= 1 && xp < 2) {
-            type = "Flower";
+            type = "Flowers";
         } else if (xp >= 2 && xp < 3) {
             type = "Bush";
         } else if (xp >= 3) {
@@ -260,7 +260,7 @@
 
     {#if settingsOpen}
         <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
-            <Settings bind:settingsOpen={settingsOpen} bind:deleteDataAlert={deleteDataAlert}/>
+            <Settings bind:settingsOpen={settingsOpen} bind:deleteDataAlert={deleteDataAlert} xp={userXP} blocks={blocks}/>
         </div>
     {/if}
 

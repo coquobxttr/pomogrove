@@ -16,6 +16,12 @@
 
     let localTime = $state(time);
     let displayTime = $state("00:00:00");
+
+    $effect(() => {
+        if (localTime <= 0) {
+            timerOpen = false
+        }
+    })
     
     onMount(() => {
         const timer = setInterval(() => {
