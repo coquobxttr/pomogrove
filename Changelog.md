@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.5.1] - 2025-11-15
+
+### Fixes
+
+- Text alignment in settings ui
+
 ## [0.5.0] - 2025-11-15
 
 ### Added

@@ -13,7 +13,7 @@
 
 <div class="backdrop-blur-sm cursor-pointer w-full h-full flex justify-center items-center shadow-2xl shadow-rose-300 z-40" onclick={() => settingsOpen = false}>
     <div class="p-5 bg-white cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
-        <h2 class="text-xl font-semibold mb-4">Settings</h2>
+        <h2 class="font-bold mb-4 px-5">Settings</h2>
 
         <ul id="settings">
             <li onclick={() => deleteDataAlert = true}>Reset Progress</li>

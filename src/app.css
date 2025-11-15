@@ -39,6 +39,7 @@
         @apply px-5;
         @apply m-5;
         @apply rounded-full;
+        @apply text-center
     }
 
     #alert button {
