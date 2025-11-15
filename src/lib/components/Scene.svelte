@@ -8,8 +8,12 @@
 
     interactivity()
     
+    let { gridObjects } = $props()
     const { pointer } = useInteractivity()
     const camFocus = $state<[number, number, number]>([0, 0, 0])
+
+    const gridGap = 0.15
+    const boxSize = 1
 
     // Target stays at origin (or wherever you want to look)
     const cameraTargetPos = new Spring(
@@ -25,9 +29,9 @@
 
     const cameraPos = new Spring(
         {
-            x: 20,
+            x: 0,
             y: 20,
-            z: 15  // Start closer to see the effect
+            z: 40  // Start closer to see the effect
         },
         {  
             stiffness: 0.05,
@@ -44,9 +48,9 @@
 
     useTask(() => {
         cameraPos.set({
-            x: -($pointer.x * 1),  // Increased multiplier to see movement
-            y: 5 + ($pointer.y * 1),
-            z: 20
+            x: -($pointer.x * 1.5),  // Increased multiplier to see movement
+            y: 20 + ($pointer.y * 1.5),
+            z: 40
         })
     })
 
@@ -65,8 +69,7 @@
 </script>
 
 <T.Scene>
-    <T.DirectionalLight position={[0, 0, 0]} intensity={3}/>
-    <T.HemisphereLight intensity={0.5}/>
+    <T.DirectionalLight position={[0, 100, 30]} castShadow/>
 
     <T.Object3D
         bind:ref={cameraTarget}
@@ -75,11 +78,17 @@
         position.z={cameraTargetPos.current.z}
     />
 
-    <T.Mesh position.y={1}>
-        <T.BoxGeometry args={[1, 1, 1]} />
-        <T.MeshBasicMaterial color="green" />
-    </T.Mesh>
+    <!-- position green blocks corresponding to the 2d array -->
 
+    <T.Group>
+        {#each gridObjects as object}
+            <T.Mesh position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]} castShadow>
+                <T.BoxGeometry args={[1, 1, 1]} />
+                <T.MeshStandardMaterial color="green" />
+            </T.Mesh>
+        {/each}
+    </T.Group>
+    
     <T.PerspectiveCamera
         bind:ref={camera}
         position.x={cameraPos.current.x}
