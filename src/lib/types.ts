@@ -1,9 +1,9 @@
 import type * as THREE from 'three'
 
 export interface GridObject {
-    type: string;
+    blockType: string;
     unlockDate: Date;
-    pomoDoroTime: number;
+    pomodoro_time: number;
     x: number;
     z: number;
 }
@@ -22,13 +22,13 @@ export function formatTime(totalSeconds: number): string {
 }
 
 export type geoTypes =
-  | THREE.BoxGeometry
-  | THREE.SphereGeometry
-  | THREE.DodecahedronGeometry
-  | THREE.CylinderGeometry
+    | THREE.BoxGeometry
+    | THREE.SphereGeometry
+    | THREE.DodecahedronGeometry
+    | THREE.CylinderGeometry
 
 export type itemType = {
-  dom: HTMLElement | undefined
-  geometry: geoTypes
-  material: THREE.MeshStandardMaterial
+    dom: HTMLElement | undefined
+    geometry: geoTypes
+    material: THREE.MeshStandardMaterial
 }

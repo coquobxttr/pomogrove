@@ -1,19 +1,21 @@
 <script lang="ts">
     import { T, useTask } from '@threlte/core'
-    import { interactivity, useInteractivity } from '@threlte/extras'
+    import { interactivity, useCursor, useInteractivity } from '@threlte/extras'
     import { Spring } from 'svelte/motion'
     import { Object3D, PerspectiveCamera } from 'three';
     import {Grid} from '@threlte/extras';
     import { injectLookAtPlugin } from './lookAtPlugin.svelte';
+    import { FogExp2 } from 'three';
 
     interactivity()
     
-    let { gridObjects } = $props()
+    let { blocks } = $props()
     const { pointer } = useInteractivity()
     const camFocus = $state<[number, number, number]>([0, 0, 0])
 
     const gridGap = 0.15
     const boxSize = 1
+    const { hovering, onPointerEnter, onPointerLeave } = useCursor()
 
     const cameraTargetPos = new Spring(
         {
@@ -48,14 +50,14 @@
     useTask(() => {
         cameraPos.set({
             x: -($pointer.x * 2),
-            y: 15 - ($pointer.y * 2),
-            z: 20
+            y: 10 - ($pointer.y * 2),
+            z: 10
         })
     })
 
     useTask(() => {
         if (camera && cameraTarget) {
-            camera.lookAt(0,0,0)
+            camera.lookAt(0,0,-5)
         }
     })
 
@@ -78,11 +80,28 @@
     />
 
     <T.Group>
-        {#each gridObjects as object}
-            <T.Mesh position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]} castShadow>
-                <T.BoxGeometry args={[1, 1, 1]} />
-                <T.MeshStandardMaterial color="#d16485" />
-            </T.Mesh>
+        {#each blocks as object}
+            {#if object.blockType == "Grass"}
+                <T.Mesh
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    onpointerenter={() => {
+                        onPointerEnter()
+                    }}
+                    onpointerleave={() => {
+                        onPointerLeave()
+                    }}
+                    castShadow
+                >
+                    <T.BoxGeometry args={[1, 1, 1]} />
+                    <T.MeshStandardMaterial color="#d16485" />
+                </T.Mesh>
+            {:else if object.blockType == "Water"}
+                <T.Mesh position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]} castShadow>
+                    <T.BoxGeometry args={[1, 1, 1]} />
+                    <T.MeshStandardMaterial color="#fa8ce4" />
+                </T.Mesh>
+            {/if}
+            
         {/each}
     </T.Group>
     

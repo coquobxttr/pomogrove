@@ -17,11 +17,20 @@
     }
     
     onMount(() => {
+        /*
         if (time <= 600) {
             message = pomEndMessages.bad
         } else if (xp > 600 && xp <= 1200) {
             message = pomEndMessages.ok
         } else if (xp > 1200) {
+            message = pomEndMessages.good
+        }
+        */
+       if (time <= 1) {
+            message = pomEndMessages.bad
+        } else if (xp > 1 && xp <= 2) {
+            message = pomEndMessages.ok
+        } else if (xp > 2) {
             message = pomEndMessages.good
         }
     })

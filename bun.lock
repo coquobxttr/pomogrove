@@ -6,8 +6,9 @@
       "dependencies": {
         "@dimforge/rapier3d-compat": "^0.19.3",
         "@tailwindcss/vite": "^4.1.17",
-        "@tauri-apps/api": "^2",
-        "@tauri-apps/plugin-opener": "^2",
+        "@tauri-apps/api": "^2.9.0",
+        "@tauri-apps/plugin-opener": "^2.5.2",
+        "@tauri-apps/plugin-store": "~2.4.1",
         "@theatre/core": "^0.7.2",
         "@theatre/studio": "^0.7.2",
         "@threlte/core": "^8.3.0",
@@ -18,18 +19,19 @@
         "@threlte/theatre": "^3.1.0",
         "@threlte/xr": "^1.2.0",
         "@types/three": "^0.181.0",
+        "lightningcss-darwin-arm64": "1.30.2",
         "tailwindcss": "^4.1.17",
         "three": "^0.181.1",
       },
       "devDependencies": {
-        "@sveltejs/adapter-static": "^3.0.6",
-        "@sveltejs/kit": "^2.9.0",
-        "@sveltejs/vite-plugin-svelte": "^5.0.0",
-        "@tauri-apps/cli": "^2",
-        "svelte": "^5.0.0",
-        "svelte-check": "^4.0.0",
-        "typescript": "~5.6.2",
-        "vite": "^6.0.3",
+        "@sveltejs/adapter-static": "^3.0.10",
+        "@sveltejs/kit": "^2.48.5",
+        "@sveltejs/vite-plugin-svelte": "^5.1.1",
+        "@tauri-apps/cli": "^2.9.4",
+        "svelte": "^5.43.6",
+        "svelte-check": "^4.3.4",
+        "typescript": "~5.6.3",
+        "vite": "^6.4.1",
       },
     },
   },
@@ -267,6 +269,8 @@
     "@tauri-apps/cli-win32-x64-msvc": ["@tauri-apps/cli-win32-x64-msvc@2.9.4", "", { "os": "win32", "cpu": "x64" }, "sha512-EdYd4c9wGvtPB95kqtEyY+bUR+k4kRw3IA30mAQ1jPH6z57AftT8q84qwv0RDp6kkEqOBKxeInKfqi4BESYuqg=="],
 
     "@tauri-apps/plugin-opener": ["@tauri-apps/plugin-opener@2.5.2", "", { "dependencies": { "@tauri-apps/api": "^2.8.0" } }, "sha512-ei/yRRoCklWHImwpCcDK3VhNXx+QXM9793aQ64YxpqVF0BDuuIlXhZgiAkc15wnPVav+IbkYhmDJIv5R326Mew=="],
+
+    "@tauri-apps/plugin-store": ["@tauri-apps/plugin-store@2.4.1", "", { "dependencies": { "@tauri-apps/api": "^2.8.0" } }, "sha512-ckGSEzZ5Ii4Hf2D5x25Oqnm2Zf9MfDWAzR+volY0z/OOBz6aucPKEY0F649JvQ0Vupku6UJo7ugpGRDOFOunkA=="],
 
     "@theatre/core": ["@theatre/core@0.7.2", "", { "dependencies": { "@theatre/dataverse": "0.7.2" } }, "sha512-IDQa/6WY7mIJAtsSd4EgNcM0IUZkl+FrqZ8DdYiCVTFap9ARDNmrngJOeFjJOsnnaHlc5GdEB/jj7fsjbIrAzQ=="],
 

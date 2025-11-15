@@ -6,7 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Local storage of User XP & Blocks
+- Local peristant storage of User XP & Blocks
+- Added Water Blocks
+- Long hover over blocks for more info about them
+
+### Changed
+
+- Autosave logic
+
+### Fixed
+
+- No longer passing full pomodoro session time, now its the duration the user studied for
 
 ## [0.3.0] - 2025-11-15
 
