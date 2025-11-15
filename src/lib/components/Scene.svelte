@@ -15,11 +15,10 @@
     const gridGap = 0.15
     const boxSize = 1
 
-    // Target stays at origin (or wherever you want to look)
     const cameraTargetPos = new Spring(
         {
             x: 0,
-            y: 1,  // Looking at the box
+            y: 1,
             z: 0
         },
         {
@@ -30,8 +29,8 @@
     const cameraPos = new Spring(
         {
             x: 0,
-            y: 20,
-            z: 40  // Start closer to see the effect
+            y: 15,
+            z: 20
         },
         {  
             stiffness: 0.05,
@@ -48,13 +47,12 @@
 
     useTask(() => {
         cameraPos.set({
-            x: -($pointer.x * 1.5),  // Increased multiplier to see movement
-            y: 20 - ($pointer.y * 1.5),
-            z: 40
+            x: -($pointer.x * 2),
+            y: 15 - ($pointer.y * 2),
+            z: 20
         })
     })
 
-    // Add this effect to make the camera look at the target
     useTask(() => {
         if (camera && cameraTarget) {
             camera.lookAt(0,0,0)
@@ -70,7 +68,8 @@
 
 <T.Scene>
     <T.DirectionalLight position={[0, 100, 30]} castShadow/>
-
+    <T.HemisphereLight intensity={0.5}/>
+    
     <T.Object3D
         bind:ref={cameraTarget}
         position.x={cameraTargetPos.current.x}
@@ -78,13 +77,11 @@
         position.z={cameraTargetPos.current.z}
     />
 
-    <!-- position green blocks corresponding to the 2d array -->
-
     <T.Group>
         {#each gridObjects as object}
             <T.Mesh position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]} castShadow>
                 <T.BoxGeometry args={[1, 1, 1]} />
-                <T.MeshStandardMaterial color="green" />
+                <T.MeshStandardMaterial color="#d16485" />
             </T.Mesh>
         {/each}
     </T.Group>
@@ -95,7 +92,6 @@
         position.y={cameraPos.current.y}
         position.z={cameraPos.current.z}
         lookAt={[0,0,0]}
-        fov={30}
         makeDefault
     />
 

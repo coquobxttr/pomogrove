@@ -4,10 +4,17 @@
     import Scene from "$lib/components/Scene.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import TimeSelect from "$lib/components/TimeSelect.svelte";
+    import PomodoroEnd from "$lib/components/PomodoroEnd.svelte";
+    import type { GridObject } from "$lib/types";
 
     let timeSelectOpen = false;
     let pomodoroTime = 0;
+    let xp = 0
+    let duration = 0;
     let timerOpen = false;
+    let pomodoroEndScreen = false;
+
+    let userXP = 0;
 
     let gridObjects: GridObject[] = [
         {
@@ -56,9 +63,7 @@
         return { x: Math.floor(Math.random() * 10) - 5, z: Math.floor(Math.random() * 10) - 5 };
     }
 
-    function addGrid() {
-        console.log("called")
-        const xp = pomodoroTime / 10;
+    function addGrid(xp: number) {
         let type = "grass";
         
         if (xp < 15) {
@@ -86,16 +91,23 @@
         console.log(gridObjects)
     }
 
+    function onPomodoroEnd() {
+        xp = Math.floor(duration / 10);
+        userXP += xp
+        pomodoroEndScreen = true;
+        addGrid(xp);
+    }
+
 </script>
 
-<div class="bg-blue-200 w-full h-full flex flex-col">
+<div class=" bg-linear-to-t from-indigo-200 via-red-200 to-yellow-100 w-full h-full flex flex-col">
     {#if !timerOpen}
-        <div class="w-full mt-10 flex flex-col items-center z-50">
-            <h1>PromoGrove</h1>
+        <div class="w-full mt-10 flex flex-col items-center z-50 pointer-events-none">
+            <h1 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">PomoGrove</h1>
 
             <!-- Bar -->
-            <ul id="menuBar" class="bg-pink-100 rounded-full p-2 flex flex-row">
-                <li>0 XP</li>
+            <ul id="menuBar" class="bg-rose-100 rounded-full p-2 flex flex-row pointer-events-auto shadow-lg">
+                <li>{userXP} XP</li>
                 <li onclick={() => timeSelectOpen = !timeSelectOpen}>Start</li>
                 <li>Settings</li>
             </ul>
@@ -114,7 +126,22 @@
 
     {#if timerOpen}
         <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
-            <Timer bind:time={pomodoroTime} bind:timerOpen={timerOpen} addGrid={addGrid}/>
+            <Timer
+                bind:time={pomodoroTime}
+                bind:timerOpen={timerOpen}
+                bind:duration={duration}
+                onPomodoroEnd={onPomodoroEnd}
+            />
+        </div>
+    {/if}
+
+    {#if pomodoroEndScreen}
+         <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+            <PomodoroEnd
+                bind:pomodoroEndScreen={pomodoroEndScreen}
+                time={duration}
+                xp={xp}
+            />
         </div>
     {/if}
 
@@ -123,5 +150,4 @@
             <Scene gridObjects={gridObjects}/>
         </Canvas>
     </div>
-    
 </div>

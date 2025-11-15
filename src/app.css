@@ -6,7 +6,7 @@
     }
 
     h1, h2, h3, h4, h5, h6 {
-        @apply font-bold;
+        @apply font-semibold;
         @apply my-5;
     }
 
@@ -19,13 +19,14 @@
     }
 
     #menuBar li {
-        @apply bg-green-600;
+        @apply bg-rose-200;
         @apply mx-2;
         @apply p-1;
         @apply px-5;
         @apply rounded-full;
-        @apply hover:bg-green-800;
+        @apply hover:bg-rose-300;
         @apply transition-colors;
         @apply cursor-pointer;
+        @apply text-white
     }
 }

@@ -66,7 +66,7 @@
 </script>
 
 <div class="bg-transparent cursor-pointer w-full h-full flex justify-center items-center" onclick={() => timeSelectOpen = false}>
-    <div class="p-5 bg-white cursor-default w-fit h-fit rounded-lg" onclick={(e) => e.stopPropagation()}>
+    <div class="p-5 bg-white cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
         <h2 class="text-xl font-semibold mb-4">Adjust Time</h2>
         
         <div class="flex items-center gap-2 mb-4">
@@ -112,7 +112,7 @@
         
         <button 
             onclick={startTimer}
-            class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded transition-colors"
+            class="w-full bg-rose-200 hover:bg-rose-300 text-white font-semibold py-2 px-4 rounded transition-colors"
         >
             Start
         </button>

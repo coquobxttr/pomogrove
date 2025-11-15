@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-11-15
+
+### Added
+
+- Xp now accumulates with each pomodoro session
+- New window when a pomodoro session ends
+- Made scene camera more sensitive to cursor
+- Changed camera position
+- Changed UI and scene colours
+
+### Fixed
+
+- Inverted camera movement with cursor on y axis
+- Spelling Mistake in title in menu
+
 ## [0.2.0] - 2025-11-15
 
 ### Added
