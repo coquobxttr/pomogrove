@@ -49,7 +49,7 @@
     useTask(() => {
         cameraPos.set({
             x: -($pointer.x * 1.5),  // Increased multiplier to see movement
-            y: 20 + ($pointer.y * 1.5),
+            y: 20 - ($pointer.y * 1.5),
             z: 40
         })
     })
