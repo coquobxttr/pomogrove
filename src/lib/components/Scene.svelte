@@ -13,7 +13,12 @@
     interactivity()
     
     let { blocks = [] } = $props()
+    let leftPressed = $state(false)
+    let rightPressed = $state(false)
+
     const { pointer } = useInteractivity()
+    let sceneRotation = $state(0);
+    const rotationSpeed = 0.02;
     const camFocus = $state<[number, number, number]>([0, 0, 0])
 
     const gridGap = 0.15
@@ -44,9 +49,25 @@
         }
     )
 
-    $effect(() => {
-        console.log('Scene received blocks:', blocks)
-    })
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'ArrowLeft' || e.key === 'd') {
+            e.preventDefault()
+            leftPressed = true
+        } else if (e.key === 'ArrowRight' || e.key === 'a') {
+            e.preventDefault()
+            rightPressed = true
+        }
+    }
+
+    const onKeyUp = (e: KeyboardEvent) => {
+        if (e.key === 'ArrowLeft' || e.key === 'd') {
+            e.preventDefault()
+            leftPressed = false
+        } else if (e.key === 'ArrowRight' || e.key === 'a') {
+            e.preventDefault()
+            rightPressed = false
+        }
+    }
 
     useTask(() => {
         camFocus[0] = 0
@@ -57,7 +78,7 @@
     useTask(() => {
         cameraPos.set({
             x: -($pointer.x * 2),
-            y: 10 - ($pointer.y * 2),
+            y: 10 + ($pointer.y * 2),
             z: 10
         })
     })
@@ -68,12 +89,27 @@
         }
     })
 
+    useTask(() => {
+        if (leftPressed) {
+            sceneRotation += rotationSpeed
+        }
+
+        if (rightPressed) {
+            sceneRotation -= rotationSpeed
+        }
+    })
+
     let cameraTarget = $state.raw<Object3D>();
     let camera = $state.raw<PerspectiveCamera>()
 
     injectLookAtPlugin()
     
 </script>
+
+<svelte:window
+    on:keydown={onKeyDown}
+    on:keyup={onKeyUp}
+/>
 
 <T.Scene>
     <T.DirectionalLight position={[0, 100, 30]} castShadow/>
@@ -86,7 +122,7 @@
         position.z={cameraTargetPos.current.z}
     />
 
-    <T.Group>
+    <T.Group rotation.y={sceneRotation}>
         {#each blocks as object}
             {#if object.blockType == "Grass"}
                 <T.Mesh

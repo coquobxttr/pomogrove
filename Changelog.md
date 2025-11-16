@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2025-11-15
+
+### Added
+
+### Changes
+
+-README
+
+## [0.6.0] - 2025-11-15
+
+### Added
+
+- Ambient sound that can be toggled on & off
+- Press left/a or right/d to rotate the view
+- Tips in the menu
+
+### Fixes
+
+- Can now override numbers in timer input
+- Numbers are only allowed in timer input
+
 ## [0.6.0] - 2025-11-15
 
 ### Added
@@ -30,7 +51,7 @@ All notable changes to this project will be documented in this file.
 - Bush Block
 - Tree Block
 
-### Changed
+### Changes
 
 - Lowered hances of a grass block appearing if the user only does a short pomodoro session
 
@@ -44,7 +65,7 @@ All notable changes to this project will be documented in this file.
 - Added Water Blocks
 - Long hover over blocks for more info about them
 
-### Changed
+### Changes
 
 - Autosave logic
 
@@ -61,8 +82,11 @@ All notable changes to this project will be documented in this file.
 - Xp now accumulates with each pomodoro session
 - New window when a pomodoro session ends
 - Made scene camera more sensitive to cursor
-- Changed camera position
-- Changed UI and scene colours
+
+### Changes
+
+- Camera position
+- UI and scene colours
 
 ### Fixed
 
@@ -85,8 +109,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Changed menu camera position
 - Added grid system for blocks
+
+### Changes
+
+- Menu camera position
 
 ---
 

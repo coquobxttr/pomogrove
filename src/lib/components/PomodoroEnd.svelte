@@ -17,20 +17,11 @@
     }
     
     onMount(() => {
-        /*
         if (time <= 600) {
             message = pomEndMessages.bad
         } else if (xp > 600 && xp <= 1200) {
             message = pomEndMessages.ok
         } else if (xp > 1200) {
-            message = pomEndMessages.good
-        }
-        */
-       if (time <= 1) {
-            message = pomEndMessages.bad
-        } else if (xp > 1 && xp <= 2) {
-            message = pomEndMessages.ok
-        } else if (xp > 2) {
             message = pomEndMessages.good
         }
     })
@@ -42,7 +33,7 @@
     class="bg-transparent cursor-pointer w-full h-full flex justify-center items-center"
     onclick={() => pomodoroEndScreen = false}
 >
-    <div class="p-5 bg-white cursor-default w-200 h-fit rounded-xl flex flex-col items-center">
+    <div class="p-5 px-10 bg-white cursor-default w-fit max-w-150 h-fit rounded-xl flex flex-col items-center">
         <div class="flex flex-row gap-4">
             <div class="flex-2">
                 <h2 class={time<600 ? 'text-red-500': ''}>{formatTime(time)}</h2>

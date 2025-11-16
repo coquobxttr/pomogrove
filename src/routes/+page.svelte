@@ -11,6 +11,7 @@
     import { load } from '@tauri-apps/plugin-store';
     import Alert from "$lib/components/DeleteDataAlert.svelte";
     import type { Store } from "@tauri-apps/plugin-store";
+    import { initAudio } from "$lib/stores/audio.svelte";
 
     let timeSelectOpen = $state(false);
     let settingsOpen = $state(false);
@@ -103,28 +104,14 @@
     function addGrid(xp: number) {
         let type = "Grass";
 
-        /*
         if (xp < 15) {
-            type = "Grass";
-        } else if (xp >= 15 && xp < 27) {
-            type = "Flowers";
-        } else if (xp >= 27 && xp < 36) {
-            type = "Bush";
-        } else if (xp >= 36) {
-            type = "Tree";
-        }
-        */
-
-        if (xp < 1) {
             const tempPosition = getRandomAdjacentPosition();
             
-            // Check adjacent blocks to influence probability
             const adjacentTypes = getAdjacentBlockTypes(tempPosition.x, tempPosition.z);
             
             const grassCount = adjacentTypes.filter(t => t === "Grass").length;
             const waterCount = adjacentTypes.filter(t => t === "Water").length;
             
-            // Calculate probabilities (more adjacent blocks = higher chance)
             const totalAdjacent = adjacentTypes.length;
             const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.5 : 1;
             const waterWeight = totalAdjacent > 0 ? (waterCount + 1) : 1;
@@ -133,11 +120,11 @@
             const grassProbability = grassWeight / totalWeight;
             
             type = Math.random() < grassProbability ? "Grass" : "Water";
-        } else if (xp >= 1 && xp < 2) {
+        } else if (xp >= 15 && xp < 27) {
             type = "Flowers";
-        } else if (xp >= 2 && xp < 3) {
+        } else if (xp >= 27 && xp < 36) {
             type = "Bush";
-        } else if (xp >= 3) {
+        } else if (xp >= 36) {
             type = "Tree";
         }
         
@@ -152,9 +139,6 @@
         });
 
         lastBlockType = type
-        console.log("last block type:", lastBlockType)
-
-        console.log(blocks)
 
         saveUserData();
     }
@@ -197,7 +181,6 @@
     }
 
     onMount(async() => {
-        //load data from store
         store = await load('userData.json')
         const storeXP = await store.get<number>('xp')
         const storeBlocks = await store.get<GridObject[]>('blocks')
@@ -205,10 +188,9 @@
         if (storeXP !== null && storeXP !== undefined) userXP = storeXP
         if (storeBlocks) blocks = storeBlocks
 
-        console.log(storeXP)
-        console.log(blocks)
-
         blocks = blocks
+
+        initAudio()
     })
 </script>
 
@@ -223,6 +205,8 @@
                 <li onclick={() => timeSelectOpen = !timeSelectOpen}>Start</li>
                 <li onclick={() => settingsOpen = true}>Settings</li>
             </ul>
+
+            <p class="absolute bottom-0 text-white pb-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Press Arrow Keys/A & D to Rotate</p>
         </div>
     {/if}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { toggleSound } from '$lib/stores/audio.svelte';
     import { formatTime, type GridObject } from '$lib/types';
     import { open } from '@tauri-apps/plugin-shell';
     import { onMount } from 'svelte';
@@ -12,7 +13,7 @@
     } = $props()
 
     let statsOpen = $state(false)
-    let studyRecord = 0;
+    let studyRecord = $state(0);
     let recordBlock: GridObject
 
     async function openREADME() {
@@ -51,7 +52,7 @@
                     </div>
                 {/if}
             </li>
-            <li>Toggle Sound</li>
+            <li onclick={toggleSound}>Toggle Sound</li>
             <li onclick={openREADME}>About/Credits</li>
         </ul>
     </div>
