@@ -104,7 +104,7 @@
     function addGrid(xp: number) {
         let type = "Grass";
 
-        if (xp < 15) {
+        if (xp < 3) {
             const tempPosition = getRandomAdjacentPosition();
             
             const adjacentTypes = getAdjacentBlockTypes(tempPosition.x, tempPosition.z);
@@ -113,18 +113,18 @@
             const waterCount = adjacentTypes.filter(t => t === "Water").length;
             
             const totalAdjacent = adjacentTypes.length;
-            const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.5 : 1;
+            const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.2: 1;
             const waterWeight = totalAdjacent > 0 ? (waterCount + 1) : 1;
             const totalWeight = grassWeight + waterWeight;
             
             const grassProbability = grassWeight / totalWeight;
             
             type = Math.random() < grassProbability ? "Grass" : "Water";
-        } else if (xp >= 15 && xp < 27) {
-            type = "Flowers";
-        } else if (xp >= 27 && xp < 36) {
+        } else if (xp >= 3 && xp < 6) {
+            type = "Flower";
+        } else if (xp >= 6 && xp < 9) {
             type = "Bush";
-        } else if (xp >= 36) {
+        } else if (xp >= 9) {
             type = "Tree";
         }
         
@@ -144,7 +144,7 @@
     }
 
     function onPomodoroEnd() {
-        xp = Math.floor(duration / 5);
+        xp = Math.floor(duration / 100);
         userXP += xp
         pomodoroEndScreen = true;
         addGrid(xp); 
@@ -194,10 +194,10 @@
     })
 </script>
 
-<div class=" bg-linear-to-t from-indigo-200 via-red-200 to-yellow-100 w-full h-full flex flex-col">
+<div class="bg-linear-to-t from-indigo-200 via-red-200 to-yellow-100 w-full h-full flex flex-col">
     {#if !timerOpen}
         <div class="w-full mt-10 flex flex-col items-center z-50 pointer-events-none">
-            <h1 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">PomoGrove</h1>
+            <h1 class="text-white text-shadow">PomoGrove</h1>
 
             <!-- Bar -->
             <ul id="menuBar" class="bg-rose-100 rounded-full p-2 flex flex-row pointer-events-auto shadow-lg">
@@ -206,7 +206,7 @@
                 <li onclick={() => settingsOpen = true}>Settings</li>
             </ul>
 
-            <p class="absolute bottom-0 text-white pb-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Press Arrow Keys/A & D to Rotate</p>
+            <p class="absolute bottom-0 text-white pb-5 text-shadow">Press Arrow Keys/A & D to Rotate</p>
         </div>
     {/if}
 
@@ -255,7 +255,7 @@
     {/if}
 
     <div class="absolute w-full h-full">
-        <Canvas>
+        <Canvas shadows>
             <Scene blocks={blocks}/>
         </Canvas>
     </div>

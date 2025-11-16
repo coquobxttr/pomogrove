@@ -8,6 +8,8 @@ export function initAudio() {
         audio = new Audio('/audio/ambient.mp3');
         audio.loop = true;
         audio.volume = 0.5;
+
+        audio.play()
     }
 }
 

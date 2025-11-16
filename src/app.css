@@ -31,7 +31,7 @@
     }
 
     #settings li {
-        @apply bg-rose-50;
+        @apply bg-white;
         @apply hover:bg-rose-100;
         @apply transition-colors;
         @apply cursor-pointer;
@@ -54,4 +54,13 @@
         @apply rounded-full;
         @apply transition-colors;
     }
+
+    #blockTooltip p {
+        @apply text-xs;
+        @apply p-1
+    }
+}
+
+@theme {
+    --text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }

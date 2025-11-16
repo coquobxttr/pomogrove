@@ -6,7 +6,7 @@
         pomodoroEndScreen = $bindable(),
         time,
         xp = 0,
-        blockType = "grass"
+        blockType = "Grass"
     } = $props()
     
     let message = $state("")

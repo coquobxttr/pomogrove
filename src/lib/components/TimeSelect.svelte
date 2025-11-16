@@ -34,6 +34,10 @@
     }
 
     function handleKeyDown(e: KeyboardEvent, prevInput: HTMLInputElement | null, nextInput: HTMLInputElement | null) {
+        if (e.key === 'Enter') {
+            startTimer()
+            return;
+        }
         const target = e.target as HTMLInputElement;
         
         const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
@@ -85,10 +89,10 @@
 </script>
 
 <div class="bg-transparent cursor-pointer w-full h-full flex justify-center items-center" onclick={() => timeSelectOpen = false}>
-    <div class="p-5 bg-white cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
-        <h2 class="text-xl font-semibold mb-4">Adjust Time</h2>
+    <div class="p-5 bg-rose-100 cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
+        <h2 class="text-2xl text-white text-shadow-lg font-semibold mb-4">Adjust Timer</h2>
         
-        <div class="flex items-center gap-2 mb-4">
+        <div class="flex items-center gap-2 mb-4" onkeydown={(e) => handleKeyDown(e, null, null)}>
             <input 
                 bind:this={input1}
                 bind:value={min1}
@@ -99,7 +103,7 @@
                 type="text" 
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded focus:bg-gray-100 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
             />
             <input 
                 bind:this={input2}
@@ -110,7 +114,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded focus:bg-gray-100 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
             />
             <span class="text-2xl font-bold">:</span>
             <input 
@@ -122,7 +126,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded focus:bg-gray-100 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
             />
             <input 
                 bind:this={input4}
@@ -133,7 +137,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded focus:bg-gray-100 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
             />
         </div>
         

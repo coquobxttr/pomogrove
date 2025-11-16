@@ -2,11 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.7.0] - 2025-11-15
+## [1.0.0] - 2025-11-16
 
 ### Added
 
+- Better lighting & shadows
+- Block appear animation
+- To do list appears when timer starts
+- Changed grass texture
+- Ability to pause the timer
+- Enter key press now triggers timer to start
+- Long hover over blocks to get info about them
+
 ### Changes
+
+- App name in config
+- Left and right arrow key detection is no longer in svelte:window
+- Minor UI changes - timer select and timer menu
+- Swapped a & d keys for camera
+
+### Fixes
+
+- Audio now plays on launch
+- Camera rotation is no longer inverted
+
+### Issues
+
+- Visual glitches with tooltips
 
 -README
 

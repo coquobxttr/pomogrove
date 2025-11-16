@@ -15,27 +15,45 @@
     } = $props();
 
     let localTime = $state(time);
-    let displayTime = $state("00:00:00");
+    let displayTime = $state("00:00");
+    let isPaused = $state(false)
+    let timer: ReturnType<typeof setInterval> | null = null
 
     $effect(() => {
         if (localTime <= 0) {
             timerOpen = false
         }
     })
-    
-    onMount(() => {
-        const timer = setInterval(() => {
+
+    function pauseTimer() {
+        isPaused = !isPaused
+
+        if (isPaused && timer) {
+            clearInterval(timer);
+            timer = null
+        } else if (!isPaused) {
+            startTimer();
+        }
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
             if (localTime > 0) {
                 localTime--;
                 displayTime = formatTime(localTime);
-            } else {
-                clearInterval(timer);
+            } else if (localTime <= 0) {
+                if (timer) clearInterval(timer);
             }
         }, 1000);
-        
+    }
+    
+    onMount(() => {    
         displayTime = formatTime(localTime);
+        startTimer();
         
-        return () => clearInterval(timer);
+        return () => {
+            if (timer) clearInterval(timer)
+        }
     });
 
     onDestroy(() => {
@@ -46,10 +64,11 @@
 
 <div class="w-full flex flex-col items-center">
     <div class="w-full mt-10 flex flex-col items-center z-50">
-        <h1 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">{displayTime}</h1>
+        <h1 class="text-white text-shadow">{displayTime}</h1>
 
         <!-- Bar -->
         <ul id="menuBar" class="bg-rose-100 rounded-full p-2 flex flex-row pointer-events-auto shadow-lg">
+            <li onclick={pauseTimer}>{isPaused ? 'Resume' : 'Pause'}</li>
             <li onclick={() => timerOpen = false}>Stop</li>
         </ul>
     </div>

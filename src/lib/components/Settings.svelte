@@ -14,7 +14,6 @@
 
     let statsOpen = $state(false)
     let studyRecord = $state(0);
-    let recordBlock: GridObject
 
     async function openREADME() {
         await open('https://github.com/coquobxttr/pomogrove/blob/dev/README.md');
@@ -24,17 +23,16 @@
         for (let block of blocks) {
             if (block.pomodoroTime > studyRecord) {
                 studyRecord = block.pomodoroTime
-                recordBlock = block
             }
         }
     })
 </script>
 
 <div class="backdrop-blur-sm cursor-pointer w-full h-full flex justify-center items-center shadow-2xl shadow-rose-300 z-40" onclick={() => settingsOpen = false}>
-    <div class="p-5 bg-white cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
-        <h2 class="font-bold mb-4 px-5">Settings</h2>
+    <div class="p-5 bg-rose-50 cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
+        <h2 class="font-bold mb-4 px-5 text-white text-shadow-lg">Settings</h2>
 
-        <p class="px-5">Click out to close</p>
+        <p class="px-5 text-xs">Click out or press esc to close</p>
 
         <ul id="settings">
             <li onclick={() => deleteDataAlert = true}>Reset Progress</li>
