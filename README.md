@@ -1,14 +1,17 @@
+
+
+
 <div align="center">
-  <h3 align="center">PomoGrove 🌳</h3>
-  <p align="center">
-    Turn your focus sessions into a beautiful 3D productivity island
-    <br />
-    <a href="https://github.com/coquobxttr/pomogrove">View Demo</a>
-    ·
-    <a href="https://github.com/coquobxttr/pomogrove/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/coquobxttr/pomogrove/issues">Request Feature</a>
-  </p>
+    <h3 align="center">PomoGrove 🌳</h3>
+    <p align="center">
+        Turn your focus sessions into a beautiful 3D productivity island
+        <br />
+        <a href="https://youtu.be/veuq5NXUR98">View Demo</a>
+        ·
+        <a href="https://github.com/coquobxttr/pomogrove/issues">Report Bug</a>
+        ·
+        <a href="https://github.com/coquobxttr/pomogrove/issues">Request Feature</a>
+    </p>
 </div>
 
 ## About The Project
@@ -22,9 +25,8 @@
 - **Visual Growth**: Watch your island grow with every completed pomodoro session
 - **Progressive Rewards**: Unlock grass, water, flowers, bushes, and trees based on session length
 - **3D Interactive Island**: Rotate and explore your productivity landscape
-- **Persistent Progress**: All your data is saved locally - your island grows with you
+- **Persistent Progress**: All your data is saved locally
 - **Ambient Audio**: Optional background music to help you focus (bring your own!)
-- **Customizable Sessions**: Set any timer duration that works for you
 
 ### Built With
 
@@ -38,44 +40,44 @@
 
 ### Prerequisites
 
-- **Node.js & npm** - [Download here](https://nodejs.org/)
-- **Rust** - [Install here](https://www.rust-lang.org/tools/install)
+- **Node.js & npm** - [download here](https://nodejs.org/)
+- **Rust** - [install here](https://www.rust-lang.org/tools/install)
 - **Ambient audio file** (optional) - Add your own MP3 to `static/audio/ambient.mp3`
 
 ### Installation
 
 1. Clone the repository
-   ```sh
-   git clone https://github.com/coquobxttr/pomogrove.git
-   cd pomogrove
-   ```
+     ```sh
+     git clone https://github.com/coquobxttr/pomogrove.git
+     cd pomogrove
+     ```
 
 2. Install dependencies
-   ```sh
-   npm install
-   ```
+     ```sh
+     npm install
+     ```
 
 3. Set up Tailwind CSS (if not already configured)
-   ```sh
-   # Follow the official SvelteKit guide
-   # https://tailwindcss.com/docs/guides/sveltekit
-   ```
+     ```sh
+     # Follow the official SvelteKit guide
+     # https://tailwindcss.com/docs/guides/sveltekit
+     ```
 
 4. Add your ambient audio (optional)
-   ```sh
-   # Place your audio file at:
-   # static/audio/ambient.mp3
-   ```
+     ```sh
+     # Place your audio file at:
+     # static/audio/ambient.mp3
+     ```
 
 5. Run in development mode
-   ```sh
-   npm run tauri dev
-   ```
+     ```sh
+     npm run tauri dev
+     ```
 
 6. Build for production
-   ```sh
-   npm run tauri build
-   ```
+     ```sh
+     npm run tauri build
+     ```
 
 ## Usage
 
@@ -87,7 +89,7 @@
 ### Block Types & Unlock Requirements
 
 - 🟩🟦 **Grass/Water**: Short sessions (< 5 minutes)
-- 🌸 **Flowers**: Medium sessions (5-10 minutes)  
+- 🌸 **Flowers**: Medium sessions (5-10 minutes)    
 - 🌿 **Bushes**: Long sessions (10-15 minutes)
 - 🌳 **Trees**: Deep focus sessions (15+ minutes)
 
@@ -109,7 +111,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 - Built for [***CS Girlies November Hackathon 2025***](https://cs-girlies-november.devpost.com)
 - **3D Model Links**
-  - [Flowers](https://sketchfab.com/3d-models/low-poly-flowers-857802babfd542e094e8ef2c396be360) - Anskar
-  - [Bush](https://sketchfab.com/3d-models/low-poly-bushes-e109272b7ea34cc0a09cbd26e6fdc6d8) - Martin3DWork - Recoloured by me
-  - [Tree](https://free3d.com/3d-model/low-poly-tree-449895.html) - medo_544 - Recoloured by me
+    - [Flowers](https://sketchfab.com/3d-models/low-poly-flowers-857802babfd542e094e8ef2c396be360) - Anskar
+    - [Bush](https://sketchfab.com/3d-models/low-poly-bushes-e109272b7ea34cc0a09cbd26e6fdc6d8) - Martin3DWork - Recoloured by me
+    - [Tree](https://free3d.com/3d-model/low-poly-tree-449895.html) - medo_544 - Recoloured by me
 - Ambient Audio - [The Guild of Ambience](https://www.youtube.com/watch?v=xNN7iTA57jM&t=5523s)
