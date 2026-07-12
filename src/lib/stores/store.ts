@@ -1,0 +1,1 @@
+export let toolTipAnimDuration = 150

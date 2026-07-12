@@ -17,12 +17,16 @@
     let settingsOpen = $state(false);
     let deleteDataAlert = $state(false)
     let pomodoroTime = $state(0);
-    let xp = $state(0)
     let duration = $state(0);
     let timerOpen = $state(false);
     let pomodoroEndScreen = $state(false);
     let userXP = $state(0);
+    let sessionXP = $state(0)
     let lastBlockType = $state("Grass")
+    let completedTasks = $state(0)
+    let totalTasks = $state(0)
+    let pomodoroDataSent = $state(false)
+    let breakTotalCount = $state(0)
 
     let store: Store | null = $state(null)
 
@@ -30,11 +34,13 @@
         {
             blockType: "Grass",
             unlockDate: new Date(),
-            pomodoroTime: 20,
+            pomodoroTime: 0,
             x: 0,
-            z: 0
+            z: 0,
+            itemRotation: null
         }
     ])
+    let parsedBlocks: GridObject[];
 
     function getRandomAdjacentPosition() {
         const randomBox = blocks[Math.floor(Math.random() * blocks.length)];
@@ -101,33 +107,25 @@
         return adjacentTypes;
     }
 
-    function addGrid(xp: number) {
-        let type = "Grass";
-
-        if (xp < 3) {
-            const tempPosition = getRandomAdjacentPosition();
-            
-            const adjacentTypes = getAdjacentBlockTypes(tempPosition.x, tempPosition.z);
-            
-            const grassCount = adjacentTypes.filter(t => t === "Grass").length;
-            const waterCount = adjacentTypes.filter(t => t === "Water").length;
-            
-            const totalAdjacent = adjacentTypes.length;
-            const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.2: 1;
-            const waterWeight = totalAdjacent > 0 ? (waterCount + 1) : 1;
-            const totalWeight = grassWeight + waterWeight;
-            
-            const grassProbability = grassWeight / totalWeight;
-            
-            type = Math.random() < grassProbability ? "Grass" : "Water";
-        } else if (xp >= 3 && xp < 6) {
-            type = "Flower";
-        } else if (xp >= 6 && xp < 9) {
-            type = "Bush";
-        } else if (xp >= 9) {
-            type = "Tree";
-        }
+    function grassOrWater() {
+        const tempPosition = getRandomAdjacentPosition();
         
+        const adjacentTypes = getAdjacentBlockTypes(tempPosition.x, tempPosition.z);
+        
+        const grassCount = adjacentTypes.filter(t => t === "Grass").length;
+        const waterCount = adjacentTypes.filter(t => t === "Water").length;
+        
+        const totalAdjacent = adjacentTypes.length;
+        const grassWeight = totalAdjacent > 0 ? (grassCount + 1) * 1.05 : 1;
+        const waterWeight = totalAdjacent > 0 ? (waterCount + 1) : 1;
+        const totalWeight = grassWeight + waterWeight;
+        
+        const grassProbability = grassWeight / totalWeight;
+        
+        return Math.random() < grassProbability ? "Grass" : "Water";
+    }
+
+    function addBlockToGrid(type: string) {
         const position = getRandomAdjacentPosition();
         
         blocks.push({
@@ -135,19 +133,74 @@
             unlockDate: new Date(),
             pomodoroTime: duration,
             x: position.x,
-            z: position.z
+            z: position.z,
+            itemRotation: type === "Grass" || type === "Water" ? null : Math.random() * 2 * Math.PI
         });
 
         lastBlockType = type
+    }
+
+    function placeBlocks() {
+        let type = "Grass";
+
+        if (duration < 300) {
+            type = grassOrWater()
+            addBlockToGrid(type)
+        } else if (duration >= 300 && duration < 600) {
+            type = grassOrWater()
+            addBlockToGrid(type)
+
+            type = "Flower";
+            addBlockToGrid(type)
+        } else if (duration >= 600 && duration < 900) {
+            for (let i = 0; i < 2; i++) {
+                type = grassOrWater()
+                addBlockToGrid(type)
+            }
+
+            type = Math.random() > 0.5 ? "Bush" : "Flower"
+            addBlockToGrid(type)
+        } else if (duration >= 900 && duration < 1200) {
+            for (let i = 0; i < 2; i++) {
+                type = grassOrWater()
+                addBlockToGrid(type)
+            }
+            type = "Bush"
+            addBlockToGrid(type)
+        } else if (duration >= 1200 && duration < 1500) {
+            for (let i = 0; i < 3; i++) {
+                type = grassOrWater()
+                addBlockToGrid(type)
+            }
+
+            type = "Tree"
+            addBlockToGrid(type)
+        } else if (duration >= 1500) {
+            for (let i = 0; i < 3; i++) {
+                type = grassOrWater()
+                addBlockToGrid(type)
+            }
+
+            for (let i = 0; i< 2; i++) {
+                type = Math.random() > 0.5 ? "Bush" : "Flower"
+                addBlockToGrid(type)
+            }
+
+            type = "Tree"
+            addBlockToGrid(type)
+        }
 
         saveUserData();
     }
 
-    function onPomodoroEnd() {
-        xp = Math.floor(duration / 100);
-        userXP += xp
+    async function onPomodoroEnd(compTasks: number, totTasks: number) {
         pomodoroEndScreen = true;
-        addGrid(xp); 
+        sessionXP = Math.floor(duration / 100);
+        userXP += sessionXP
+        placeBlocks(); 
+
+        completedTasks = compTasks
+        totalTasks = totTasks
         
         saveUserData()
     }
@@ -157,14 +210,15 @@
 
         if (!store) return
 
-        xp = 0
+        userXP = 0
         blocks = [
             {
                 blockType: "Grass",
                 unlockDate: new Date(),
                 pomodoroTime: 20,
                 x: 0,
-                z: 0
+                z: 0,
+                itemRotation: null
             }
         ]
 
@@ -174,7 +228,7 @@
 
     async function saveUserData() {
         if (store) {
-            await store.set('xp', userXP)
+            await store.set('sessionXP', userXP)
             await store.set('blocks', blocks)
             await store.save()
         } 
@@ -182,31 +236,42 @@
 
     onMount(async() => {
         store = await load('userData.json')
-        const storeXP = await store.get<number>('xp')
+        const storesessionXP = await store.get<number>('sessionXP')
         const storeBlocks = await store.get<GridObject[]>('blocks')
         
-        if (storeXP !== null && storeXP !== undefined) userXP = storeXP
-        if (storeBlocks) blocks = storeBlocks
+        if (storesessionXP !== null && storesessionXP !== undefined) userXP = storesessionXP
+        if (storeBlocks) {
+            blocks = storeBlocks
 
-        blocks = blocks
+            parsedBlocks = blocks.map((b: any) => ({
+                ...b,
+                unlockDate:
+                typeof b.unlockDate === 'string' ? new Date(b.unlockDate) : b.unlockDate
+            }));
+        }
+
+        if (parsedBlocks) blocks = parsedBlocks
 
         initAudio()
     })
 </script>
 
-<div class="bg-linear-to-t from-indigo-200 via-red-200 to-yellow-100 w-full h-full flex flex-col">
-    {#if !timerOpen}
-        <div class="w-full mt-10 flex flex-col items-center z-50 pointer-events-none">
-            <h1 class="text-white text-shadow">PomoGrove</h1>
+<div class="w-full h-full flex flex-col items-center pointer-events-none">
+    {#if !timerOpen && !pomodoroEndScreen}
+        <div class="w-fit pt-10 px-5 rounded-b-4xl flex flex-col items-center z-50 pointer-events-none shadow-lg">
+            <h1 class="text-white text-shadow mb-0">PomoGrove</h1>
+            <div class="w-full flex">
+                <p id="homeText" class="w-full text-right font-semibold mr-3">{__APP_VERSION__}</p>
+            </div>
 
             <!-- Bar -->
-            <ul id="menuBar" class="bg-rose-100 rounded-full p-2 flex flex-row pointer-events-auto shadow-lg">
+            <ul id="menuBar">
                 <li class="pointer-events-none">{userXP} XP</li>
-                <li onclick={() => timeSelectOpen = !timeSelectOpen}>Start</li>
-                <li onclick={() => settingsOpen = true}>Settings</li>
+                <li class="pointer-events-auto" onclick={() => timeSelectOpen = !timeSelectOpen}>Start</li>
+                <li class="pointer-events-auto" onclick={() => settingsOpen = true}>Settings</li>
             </ul>
 
-            <p class="absolute bottom-0 text-white pb-5 text-shadow">Press Arrow Keys/A & D to Rotate</p>
+            <p id="homeText" class="absolute bottom-0 pb-5">Press Arrow Keys/A & D to Rotate or Use Your Trackpad</p>
         </div>
     {/if}
 
@@ -216,6 +281,7 @@
                 bind:timeSelectOpen={timeSelectOpen}
                 bind:pomodoroTime={pomodoroTime}
                 bind:timerOpen={timerOpen}
+                bind:breakTotalCount={breakTotalCount}
             />
         </div>
     {/if}
@@ -226,35 +292,40 @@
                 bind:time={pomodoroTime}
                 bind:timerOpen={timerOpen}
                 bind:duration={duration}
+                bind:pomodoroDataSent={pomodoroDataSent}
+                bind:pomodoroEndScreen={pomodoroEndScreen}
+                breakTotalCount={breakTotalCount}
                 onPomodoroEnd={onPomodoroEnd}
             />
         </div>
     {/if}
 
-    {#if pomodoroEndScreen}
-         <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+    {#if pomodoroEndScreen && pomodoroDataSent}
+         <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full pointer-events-auto">
             <PomodoroEnd
                 bind:pomodoroEndScreen={pomodoroEndScreen}
+                bind:pomodoroDataSent={pomodoroDataSent}
+                completedTasks={completedTasks}
+                totalTasks={totalTasks}
                 time={duration}
-                xp={xp}
                 blockType={lastBlockType}
             />
         </div>
     {/if}
 
     {#if settingsOpen}
-        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full pointer-events-auto">
             <Settings bind:settingsOpen={settingsOpen} bind:deleteDataAlert={deleteDataAlert} xp={userXP} blocks={blocks}/>
         </div>
     {/if}
 
     {#if deleteDataAlert}
-        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full">
+        <div transition:fade={{ duration: 250 }} class="absolute z-50 w-full h-full pointer-events-auto">
             <Alert bind:alertOpen={deleteDataAlert} resetData={resetData}/>
         </div>
     {/if}
 
-    <div class="absolute w-full h-full">
+    <div class="absolute w-full h-full pointer-events-auto">
         <Canvas shadows>
             <Scene blocks={blocks}/>
         </Canvas>

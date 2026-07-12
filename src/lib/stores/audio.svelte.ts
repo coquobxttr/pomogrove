@@ -25,6 +25,10 @@ export function toggleSound() {
     return soundEnabled;
 }
 
+export function getSoundEnabled() {
+    return soundEnabled
+}
+
 export function getAudioState() {
     return soundEnabled;
 }

@@ -8,6 +8,7 @@
         timeSelectOpen = $bindable(),
         pomodoroTime = $bindable() ,
         timerOpen = $bindable(),
+        breakTotalCount = $bindable()
     } = $props()
 
     function handleFocus(e: FocusEvent) {
@@ -85,14 +86,15 @@
     let input2: HTMLInputElement;
     let input3: HTMLInputElement;
     let input4: HTMLInputElement;
+    let breakInput: HTMLInputElement;
 
 </script>
 
-<div class="bg-transparent cursor-pointer w-full h-full flex justify-center items-center" onclick={() => timeSelectOpen = false}>
-    <div class="p-5 bg-rose-100 cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
+<div class="backdrop-blur-xs bg-rose-300/20 cursor-pointer w-full h-full flex justify-center items-center pointer-events-auto" onclick={() => timeSelectOpen = false}>
+    <div class="flex flex-col items-center p-5 bg-transparent shadow-2xl cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
         <h2 class="text-2xl text-white text-shadow-lg font-semibold mb-4">Adjust Timer</h2>
         
-        <div class="flex items-center gap-2 mb-4" onkeydown={(e) => handleKeyDown(e, null, null)}>
+        <div class="flex items-center gap-2 mb-4 pointer-events-auto" onkeydown={(e) => handleKeyDown(e, null, null)}>
             <input 
                 bind:this={input1}
                 bind:value={min1}
@@ -103,7 +105,7 @@
                 type="text" 
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white/25 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none border-rose-300 transition"
             />
             <input 
                 bind:this={input2}
@@ -114,7 +116,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white/25 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none border-rose-300 transition"
             />
             <span class="text-2xl font-bold">:</span>
             <input 
@@ -126,7 +128,7 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white/25 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none border-rose-300 transition"
             />
             <input 
                 bind:this={input4}
@@ -137,13 +139,24 @@
                 type="text"
                 inputmode="numeric"
                 maxlength="1"
-                class="w-12 h-12 text-center text-2xl rounded bg-white focus:bg-rose-50 focus:outline-none"
+                class="w-12 h-12 text-center text-2xl rounded bg-white/25 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none border-rose-300 transition"
             />
         </div>
+
+        <h3>How Many Breaks Do You Want?</h3>
+
+        <input 
+            bind:this={breakInput}
+            bind:value={breakTotalCount}
+            type="text" 
+            inputmode="numeric"
+            maxlength="2"
+            class="w-12 h-12 text-center text-2xl rounded bg-white/25 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none border-rose-300 transition"
+        />
         
         <button 
             onclick={startTimer}
-            class="w-full bg-rose-200 hover:bg-rose-300 text-white font-semibold py-2 px-4 rounded transition-colors"
+            class="w-full bg-rose-200/25 hover:bg-rose-300/25 text-white font-semibold py-2 px-4 rounded transition-colors pointer-events-auto border-rose-300 text-shadow cursor-pointer"
         >
             Start
         </button>

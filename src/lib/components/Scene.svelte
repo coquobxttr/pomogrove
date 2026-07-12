@@ -1,26 +1,31 @@
 <script lang="ts">
     import { T, useTask } from '@threlte/core'
-    import { HTML, interactivity, transitions, useCursor, useInteractivity, useTexture } from '@threlte/extras'
-    import { Spring } from 'svelte/motion'
-    import { Group, MeshStandardMaterial, Object3D, PerspectiveCamera } from 'three';
+    import { Environment, interactivity, useCursor, useInteractivity, useTexture, global } from '@threlte/extras'
+    import { Spring, Tween } from 'svelte/motion'
+    import { EquirectangularReflectionMapping, MeshStandardMaterial, Object3D, PerspectiveCamera } from 'three';
     import { injectLookAtPlugin } from './lookAtPlugin.svelte';
-    import { scale } from '$lib/transitions/scale';
-    import { scale as htmlScale } from 'svelte/transition';
 
-    import Bush from '$lib/components/models/Bush.svelte';
-    import Tree from '$lib/components/models/Tree.svelte';
-    import Flower from '$lib/components/models/Flowers.svelte';
-    import { formatTime } from '$lib/types';
+    import Bush from '$lib/models/Bush.svelte';
+    import Tree from '$lib/models/Tree.svelte';
+    import Flower from '$lib/models/Flowers.svelte';
+    import Tooltip from './Tooltip.svelte';
+    import { formatTime, type GridObject } from '$lib/types';
+    import { toolTipAnimDuration } from '$lib/stores/store';
+    import { cubicOut } from 'svelte/easing';
 
     interactivity()
-    transitions()
     
-    let { blocks = [] } = $props()
+    let { blocks = [] }: {
+        blocks: GridObject[]
+    } = $props()
     let leftPressed = $state(false)
     let rightPressed = $state(false)
+    let toolTipOpen = $state(false)
 
     let hoverTimer: ReturnType<typeof setTimeout> | null = null
+    let isHovering = false
     let hoverBlockIndex: number | null = $state(null)
+    let currentHoverBlock: number | null = null
 
     const { pointer } = useInteractivity()
     let sceneRotation = $state(0)
@@ -34,8 +39,14 @@
     const grassSide = useTexture('textures/grassSide.png')
     const grassTop = useTexture('textures/grassTop.png')
     const grassBottom = useTexture('textures/grassBottom.png')
-
     const grassTextures = Promise.all([$grassSide, $grassTop, $grassBottom])
+
+    const skyTexture = useTexture('/textures/sky.jpg').then((texture) => {
+        texture.mapping = EquirectangularReflectionMapping
+        return texture
+    })
+
+    let cameraZoom = $state(1)
 
     grassTextures.then(() => {
         console.log('All grass textures loaded')
@@ -87,6 +98,20 @@
         }
     }
 
+    const onScroll = (e: WheelEvent) => {
+        const target = e.target as HTMLElement
+        if (!target.tagName || target.tagName.toLowerCase() !== 'canvas') return;
+
+        e.preventDefault()
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            const zoomSpeed = 0.01;
+            cameraZoom -= e.deltaY * zoomSpeed;
+            cameraZoom = Math.max(0.5, Math.min(cameraZoom, 3));
+        } else {
+            sceneRotation += e.deltaX * 0.001
+        }
+    }
+
     useTask(() => {
         camFocus[0] = 0
         camFocus[1] = 0
@@ -95,9 +120,9 @@
 
     useTask(() => {
         cameraPos.set({
-            x: -($pointer.x * 2),
-            y: 10 + ($pointer.y * 2),
-            z: 10
+            x: cameraZoom * -($pointer.x * 2),
+            y: cameraZoom * (10 + ($pointer.y * 2)),
+            z: cameraZoom * 10
         })
     })
 
@@ -123,28 +148,57 @@
     injectLookAtPlugin()
 
     function handlePointerEnter(blockIndex: number) {
+        isHovering = true;
+        currentHoverBlock = blockIndex
         onPointerEnter()
 
         hoverTimer = setTimeout(() => {
-            hoverBlockIndex = blockIndex
+            if (isHovering && currentHoverBlock === blockIndex) hoverBlockIndex = blockIndex
         }, 1000);
     }
 
     function handlePointerLeave() {
+        isHovering = false
+        currentHoverBlock = null
         onPointerLeave()
         
         if (hoverTimer) {
             clearTimeout(hoverTimer);
-            hoverTimer = null;
+        }
+        hoverTimer = null;
+        toolTipOpen = true
+        setTimeout(() => {
+            hoverBlockIndex = null
+            toolTipOpen = false
+        }, toolTipAnimDuration);
+    }
+
+    function animateScaleIn(ref: Object3D) {
+        const startTime = performance.now()
+        const duration = 600
+        
+        ref.scale.setScalar(0)
+        
+        const animate = () => {
+            const elapsed = performance.now() - startTime
+            const progress = Math.min(elapsed / duration, 1)
+            const easedProgress = cubicOut(progress)
+            
+            ref.scale.setScalar(easedProgress)
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate)
+            }
         }
         
-        hoverBlockIndex = null
+        requestAnimationFrame(animate)
     }
 </script>
 
 <svelte:window
     on:keydown={onKeyDown}
     on:keyup={onKeyUp}
+    on:wheel={onScroll}
 />
 
 {#snippet grass(index: number)}
@@ -160,7 +214,7 @@
                 new MeshStandardMaterial({ map: textures[2] }),
                 new MeshStandardMaterial({ map: textures[0] }),
                 new MeshStandardMaterial({ map: textures[0] })
-                ]}
+            ]}
             >
             <T.BoxGeometry args={[1, 1, 1]} />
         </T.Mesh>
@@ -168,140 +222,10 @@
 {/snippet}
 
 {#snippet toolTip(index: number)}
-    <HTML center position={[0,2,0]}>
-        <div id="blockTooltip" class="flex flex-row relative bg-white rounded-lg px-4 py-2 shadow-lg w-fit" transition:htmlScale>
-            <p>{blocks[index].blockType} Block</p>
-            <div class="flex flex-col">
-                <p>Session Duration: {formatTime(blocks[index].pomodoroTime)}</p>
-                <p>Unlock Date: {blocks[index].unlockDate.toLocaleString()}</p>
-            </div>
-                            
-            <div class="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0 
-                border-l-8 border-l-transparent 
-                border-r-8 border-r-transparent 
-                border-t-8 border-t-white"
-            >
-            </div>
-        </div>
-    </HTML>
+    <Tooltip blocks={blocks} index={index} formatTime={formatTime} isExiting={toolTipOpen}/>
 {/snippet}
 
 <T.Scene>
-    <T.DirectionalLight 
-        position={[50, 50, 50]}
-        intensity={1.5}
-        color="#ffffeb"
-        castShadow
-        shadow.mapSize.width={2048}
-        shadow.mapSize.height={2048}
-        shadow.camera.left={-50}
-        shadow.camera.right={50}
-        shadow.camera.top={50}
-        shadow.camera.bottom={-50}
-        shadow.camera.near={0.5}
-        shadow.camera.far={200}
-    />
-    
-    <T.AmbientLight intensity={0.4} color="#fda4af" />
-    
-    <T.HemisphereLight 
-        skyColor="#fefce8"
-        groundColor="#c7d2fe"
-        intensity={1}
-    />
-    
-    <T.DirectionalLight 
-        position={[-30, 20, -30]}
-        intensity={5}
-        color="#ffddaa"
-    />
-    
-    <T.Object3D
-        bind:ref={cameraTarget}
-        position.x={cameraTargetPos.current.x}
-        position.y={cameraTargetPos.current.y}
-        position.z={cameraTargetPos.current.z}
-    />
-
-    <T.Group rotation.y={sceneRotation}>
-        {#each blocks as object, index}
-            {#if object.blockType == "Grass"}
-                <T.Group
-                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
-                    receiveShadow
-                    transition={scale(0)}
-                >
-                    {#if hoverBlockIndex === index}
-                        {@render toolTip(index)}
-                    {/if}
-
-                    {@render grass(index)}
-                </T.Group>
-            {:else if object.blockType == "Water"}
-                <T.Group position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}>
-                    {#if hoverBlockIndex === index}
-                        {@render toolTip(index)}
-                    {/if}
-
-                    <T.Mesh
-                        receiveShadow
-                        onpointerenter={() => handlePointerEnter(index)}
-                        onpointerleave={handlePointerLeave}
-                        transition={scale(0)}
-                    >
-                        <T.BoxGeometry args={[1, 1, 1]} />
-                        <T.MeshStandardMaterial color="#fa8ce4" transparent opacity={0.8}/>
-                    </T.Mesh>
-                </T.Group>
-                
-            {:else if object.blockType == "Bush"}
-                <T.Group
-                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
-                    onpointerenter={() => handlePointerEnter(index)}
-                    onpointerleave={handlePointerLeave}
-                    transition={scale(0)}
-                >
-                    {#if hoverBlockIndex === index}
-                        {@render toolTip(index)}
-                    {/if}
-                    
-                    <Bush position={[0.1,0.6,0]} scale={0.8} castShadow/>
-                    {@render grass(index)}
-                </T.Group>
-            {:else if object.blockType == "Tree"}
-                <T.Group
-                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
-                    receiveShadow
-                    onpointerenter={() => handlePointerEnter(index)}
-                    onpointerleave={handlePointerLeave}
-                    transition={scale(0)}
-                >
-                    {#if hoverBlockIndex === index}
-                        {@render toolTip(index)}
-                    {/if}
-
-                    <Tree position={[-0.0025,-0.2,0]} scale={0.8} castShadow/>
-                    {@render grass(index)}
-                </T.Group>
-            {:else if object.blockType == "Flower"}
-                <T.Group
-                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
-                    receiveShadow
-                    onpointerenter={() => handlePointerEnter(index)}
-                    onpointerleave={handlePointerLeave}
-                    transition={scale(0)}
-                >
-                    {#if hoverBlockIndex === index}
-                        {@render toolTip(index)}
-                    {/if}
-
-                    <Flower position={[0,0.3,0]} scale={0.3} castShadow/>
-                    {@render grass(index)}
-                </T.Group>
-            {/if}
-        {/each}
-    </T.Group>
-    
     <T.PerspectiveCamera
         bind:ref={camera}
         position.x={cameraPos.current.x}
@@ -311,7 +235,111 @@
         makeDefault
     />
 
-    <!--
-    <Grid infiniteGrid={true} />
-    -->
+    <T.Object3D
+        bind:ref={cameraTarget}
+        position.x={cameraTargetPos.current.x}
+        position.y={cameraTargetPos.current.y}
+        position.z={cameraTargetPos.current.z}
+    />
+
+    {#await skyTexture then texture}
+        <Environment {texture} isBackground/>
+    {/await}
+
+    <T.Group rotation.y={sceneRotation}>
+        <T.SpotLight
+            position={[0,50,0]}
+            intensity={10}
+            decay={0}
+            angle={Math.PI/4}
+            color={"#f5426c"}
+            castShadow
+        />
+
+        <T.AmbientLight intensity={0.5} color="#f55b0f" />
+        
+        <T.HemisphereLight 
+            skyColor="#ff0019"
+            groundColor="#b050fa"
+            intensity={1}
+        />
+
+
+        {#each blocks as object, index (object.unlockDate.getTime() + index)}
+            {#if object.blockType == "Grass"}
+                <T.Group
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    receiveShadow
+                    oncreate={(ref) => animateScaleIn(ref)}
+                >
+                    {#if hoverBlockIndex === index}
+                        {@render toolTip(index)}
+                    {/if}
+
+                    {@render grass(index)}
+                </T.Group>
+            {:else if object.blockType == "Water"}
+                <T.Group
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    onpointerenter={() => handlePointerEnter(index)}
+                    onpointerleave={handlePointerLeave}
+                    receiveShadow
+                    oncreate={(ref) => animateScaleIn(ref)}
+                >
+                    {#if hoverBlockIndex === index}
+                        {@render toolTip(index)}
+                    {/if}
+
+                    <T.Mesh>
+                        <T.BoxGeometry args={[1, 1, 1]} />
+                        <T.MeshStandardMaterial color="#fa8ce4" transparent opacity={0.8}/>
+                    </T.Mesh>
+                </T.Group>   
+            {:else if object.blockType == "Bush"}
+                <T.Group
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    onpointerenter={() => handlePointerEnter(index)}
+                    onpointerleave={handlePointerLeave}
+                    oncreate={(ref) => animateScaleIn(ref)}
+                >
+                    {#if hoverBlockIndex === index}
+                        {@render toolTip(index)}
+                    {/if}
+                    
+                    <Bush position={[0.1,0.6,0]} scale={0.8} rotation.y={object.itemRotation} castShadow/>
+                    {@render grass(index)}
+                </T.Group>
+            {:else if object.blockType == "Tree"}
+                <T.Group
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    receiveShadow
+                    onpointerenter={() => handlePointerEnter(index)}
+                    onpointerleave={handlePointerLeave}
+                    oncreate={(ref) => animateScaleIn(ref)}
+                >
+                    {#if hoverBlockIndex === index}
+                        {@render toolTip(index)}
+                    {/if}
+
+                    <Tree position={[-0.0025,-0.2,0]} scale={0.8} rotation.y={object.itemRotation} castShadow/>
+                    {@render grass(index)}
+                </T.Group>
+            {:else if object.blockType == "Flower"}
+                <T.Group
+                    position={[object.x * (boxSize + gridGap), 1, object.z * (boxSize + gridGap)]}
+                    receiveShadow
+                    onpointerenter={() => handlePointerEnter(index)}
+                    onpointerleave={handlePointerLeave}
+                    oncreate={(ref) => animateScaleIn(ref)}
+                >
+                    {#if hoverBlockIndex === index}
+                        {@render toolTip(index)}
+                    {/if}
+
+                    <Flower position={[0,0.3,0]} scale={0.3} rotation.y={object.itemRotation} castShadow/>
+                    {@render grass(index)}
+                </T.Group>
+            {/if}
+        {/each}
+    </T.Group>
 </T.Scene>

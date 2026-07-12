@@ -6,6 +6,7 @@ export interface GridObject {
     pomodoroTime: number;
     x: number;
     z: number;
+    itemRotation: number | null;
 }
 
 export enum pomEndMessages {

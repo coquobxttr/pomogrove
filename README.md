@@ -1,6 +1,3 @@
-
-
-
 <div align="center">
     <h3 align="center">PomoGrove 🌳</h3>
     <p align="center">

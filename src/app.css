@@ -1,8 +1,14 @@
 @import 'tailwindcss';
 
 @layer base {
+     * {
+        @apply select-none
+    }
     html, body {
         @apply h-full;
+        @apply text-rose-800;
+        @apply overflow-hidden;
+        @apply overscroll-none;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -18,33 +24,32 @@
         @apply text-3xl
     }
 
+    h3 {
+        @apply text-xl
+    }
+
+    #menuBar {
+        @apply rounded-b-3xl;
+        @apply p-5;
+        @apply flex;
+        @apply flex-row;
+        @apply pointer-events-none;
+    }
+
     #menuBar li {
-        @apply bg-rose-200;
+        @apply bg-white/25;
+        @apply hover:bg-rose-200/25;
         @apply mx-2;
         @apply p-1;
         @apply px-5;
-        @apply rounded-full;
-        @apply hover:bg-rose-300;
+        @apply rounded-4xl;
         @apply transition-colors;
         @apply cursor-pointer;
-        @apply text-white
-    }
-
-    #settings li {
-        @apply bg-white;
-        @apply hover:bg-rose-100;
-        @apply transition-colors;
-        @apply cursor-pointer;
-        @apply p-1;
-        @apply px-5;
-        @apply m-5;
-        @apply rounded-full;
-        @apply text-center
     }
 
     #alert button {
-        @apply bg-rose-200;
-        @apply hover:bg-rose-300;
+        @apply bg-rose-200/25;
+        @apply hover:bg-rose-300/25;
         @apply cursor-pointer;
         @apply mx-4;
         @apply my-2;
@@ -58,6 +63,40 @@
     #blockTooltip p {
         @apply text-xs;
         @apply p-1
+    }
+
+    #homeText {
+        @apply text-white;
+        @apply text-shadow;
+    }
+
+    #settingsScreen div {
+        @apply p-5;
+        @apply cursor-default;
+        @apply w-fit;
+        @apply h-90;
+        @apply rounded-xl;
+        @apply shadow-lg;
+    }
+
+    #settings li {
+        @apply bg-white/25;
+        @apply hover:bg-rose-200/25;
+        @apply transition-colors;
+        @apply cursor-pointer;
+        @apply p-1;
+        @apply px-5;
+        @apply m-5;
+        @apply rounded-full;
+        @apply text-center;
+    }
+
+    #settingsScreen div h1,h2,h3,h4,h5,h6 {
+        @apply font-bold;
+        @apply mb-4;
+        @apply px-5;
+        @apply text-white;
+        @apply text-shadow-lg
     }
 }
 

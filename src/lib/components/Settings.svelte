@@ -1,9 +1,12 @@
 <script lang="ts">
     import { toggleSound } from '$lib/stores/audio.svelte';
-    import { formatTime, type GridObject } from '$lib/types';
+    import { formatTime } from '$lib/types';
     import { open } from '@tauri-apps/plugin-shell';
     import { onMount } from 'svelte';
     import { scale } from 'svelte/transition';
+    import { Volume2 } from '@lucide/svelte';
+    import { VolumeOff } from '@lucide/svelte';
+    import { getSoundEnabled } from '$lib/stores/audio.svelte';
 
     let { 
         settingsOpen = $bindable(),
@@ -28,30 +31,42 @@
     })
 </script>
 
-<div class="backdrop-blur-sm cursor-pointer w-full h-full flex justify-center items-center shadow-2xl shadow-rose-300 z-40" onclick={() => settingsOpen = false}>
-    <div class="p-5 bg-rose-50 cursor-default w-fit h-fit rounded-xl" onclick={(e) => e.stopPropagation()}>
-        <h2 class="font-bold mb-4 px-5 text-white text-shadow-lg">Settings</h2>
+<div
+    id="settingsScreen"
+    class="backdrop-blur-sm bg-rose-300/20 cursor-pointer w-full h-full flex justify-center items-center z-40 gap-2"
+    onclick={() => settingsOpen = false}
+>
+    <div onclick={(e) => e.stopPropagation()}>
+        <h2>Settings</h2>
 
         <p class="px-5 text-xs">Click out or press esc to close</p>
 
         <ul id="settings">
-            <li onclick={() => deleteDataAlert = true}>Reset Progress</li>
             <li onclick={() => statsOpen = !statsOpen}>Stats Display</li>
-            <li class="bg-transparent w-fit h-fit rounded-none p-0">
-                {#if statsOpen}
-                    <div
-                        transition:scale={{ duration: 200 }}
-                    >
-                        <h3>Total XP</h3>
-                        <p>{xp}</p>
-
-                        <h3>Longest Study Session</h3>
-                        <p>{formatTime(studyRecord)}</p>
-                    </div>
+            <li onclick={toggleSound} class="flex flex-row items-center">
+                {#if getSoundEnabled()}
+                    <Volume2 size={20}/>
+                {:else}
+                    <VolumeOff size={20} color={"#fb7185"}/>
                 {/if}
-            </li>
-            <li onclick={toggleSound}>Toggle Sound</li>
+                <p class="mx-1">
+                    Toggle Sound
+                </p>
+                </li>
+            <li class="hover:bg-red-500/25" onclick={() => deleteDataAlert = true}>Reset Progress</li>
             <li onclick={openREADME}>About/Credits</li>
         </ul>
     </div>
+
+    {#if statsOpen}
+        <div
+            transition:scale={{ duration: 200 }}
+        >
+            <h2>Total XP</h2>
+            <p class="pl-5 text-2xl">{xp}</p>
+
+            <h2>Longest Study Session</h2>
+            <p class="pl-5 text-2xl">{formatTime(studyRecord)}</p>
+        </div>
+    {/if}
 </div>
