@@ -1,13 +1,11 @@
 <div align="center">
-    <h3 align="center">PomoGrove 🌳</h3>
+    <h3 align="center">PomoGrove</h3>
     <p align="center">
         Turn your focus sessions into a beautiful 3D productivity island
         <br />
         <a href="https://youtu.be/veuq5NXUR98">View Demo</a>
         ·
         <a href="https://github.com/coquobxttr/pomogrove/issues">Report Bug</a>
-        ·
-        <a href="https://github.com/coquobxttr/pomogrove/issues">Request Feature</a>
     </p>
 </div>
 
@@ -85,10 +83,10 @@
 
 ### Block Types & Unlock Requirements
 
-- 🟩🟦 **Grass/Water**: Short sessions (< 5 minutes)
-- 🌸 **Flowers**: Medium sessions (5-10 minutes)    
-- 🌿 **Bushes**: Long sessions (10-15 minutes)
-- 🌳 **Trees**: Deep focus sessions (15+ minutes)
+- **Grass/Water**: Short sessions (< 5 minutes)
+- **Flowers**: Medium sessions (5-10 minutes)    
+- **Bushes**: Long sessions (10-15 minutes)
+- **Trees**: Deep focus sessions (15+ minutes)
 
 ## Contributing
 

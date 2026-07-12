@@ -13,8 +13,7 @@
     "windows": [
       {
         "title": "PomoGrove",
-        "width": 800,
-        "height": 600
+        "maximized": true
       }
     ],
     "security": {
